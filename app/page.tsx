@@ -1,9 +1,121 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
+import Link from "next/link";
 import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaRocket, FaBrain, FaCode, FaCloud } from "react-icons/fa";
 import ProfileCard from "./components/ProfileCard";
+import Lanyard from "./components/Lanyard";
+import CardSwap, { Card } from "./components/CardSwap";
+
+// Client-side only wrapper to prevent hydration issues
+function ClientOnly({ children }: { children: React.ReactNode }) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
 
 export default function Home() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState("");
+
+  // Initialize EmailJS
+  useEffect(() => {
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+    console.log("Initializing EmailJS with public key:", publicKey);
+    
+    if (publicKey) {
+      emailjs.init(publicKey);
+    } else {
+      console.error("EmailJS public key not found in environment variables");
+    }
+  }, []);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+    setStatusMessage("");
+
+    // Debug: Check if environment variables are loaded
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    console.log("Environment variables:", { serviceId, templateId, publicKey });
+
+    if (!serviceId || !templateId || !publicKey) {
+      setSubmitStatus("error");
+      setStatusMessage("Email service not configured. Please contact me directly.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+              // EmailJS configuration using environment variables
+        const result = await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            // Standard EmailJS template variables
+            user_name: `${formData.firstName} ${formData.lastName}`,
+            user_email: formData.email,
+            subject: formData.subject,
+            message: formData.message,
+            // Alternative variable names that might be expected
+            from_name: `${formData.firstName} ${formData.lastName}`,
+            from_email: formData.email,
+            to_name: "Anas Saadi"
+          },
+          publicKey
+        );
+
+      if (result.status === 200) {
+        setSubmitStatus("success");
+        setStatusMessage("Message sent successfully! I'll get back to you soon.");
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          subject: "",
+          message: ""
+        });
+      } else {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
+      console.error("EmailJS error:", error);
+      setSubmitStatus("error");
+      setStatusMessage("Failed to send message. Please try again or contact me directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 text-gray-100">
       {/* Navigation */}
@@ -18,6 +130,7 @@ export default function Home() {
               <a href="#experience" className="hover:text-blue-400 transition-colors font-medium">Experience</a>
               <a href="#projects" className="hover:text-blue-400 transition-colors font-medium">Projects</a>
               <a href="#skills" className="hover:text-blue-400 transition-colors font-medium">Skills</a>
+              <a href="#contact" className="hover:text-blue-400 transition-colors font-medium">Contact</a>
             </div>
           </div>
         </div>
@@ -29,7 +142,8 @@ export default function Home() {
                      <div className="mb-12">
              {/* Advanced Profile Card */}
              <div className="flex justify-center">
-                               <ProfileCard
+                               <ClientOnly>
+                                 <ProfileCard
                   name="Anas Saadi"
                   title="Junior Software Engineer - ENSIAS Alumni"
                   handle="anasaadi02"
@@ -44,11 +158,12 @@ export default function Home() {
                     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 />
+                               </ClientOnly>
              </div>
            </div>
           
                      {/* Contact Info */}
-           <div id="contact" className="flex flex-wrap justify-center gap-8 mb-12">
+           <div id="about" className="flex flex-wrap justify-center gap-8 mb-12">
              <div className="flex items-center space-x-3 text-gray-200 bg-slate-800/60 px-6 py-3 rounded-full border border-blue-600/30">
                <FaPhone className="text-blue-400" />
                <span className="font-medium">+212-678851747</span>
@@ -140,16 +255,26 @@ export default function Home() {
 
       {/* Experience Section */}
       <section id="experience" className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <h2 className="text-4xl font-serif font-bold text-center mb-16 text-blue-400">
             Professional Experience
           </h2>
           
           <div className="space-y-8">
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-slate-800/80 rounded-2xl p-10 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex gap-8">
+                {/* Badge Section */}
+                <div className="flex-shrink-0 flex justify-center items-start pt-2">
+                  <ClientOnly>
+                    <Lanyard size="large" position={[0, 0, 20]} />
+                  </ClientOnly>
+                </div>
+                
+                {/* Content Section */}
+                <div className="flex-1">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h3 className="text-2xl font-serif font-semibold text-gray-100">Software Engineer (Intern)</h3>
+                      <h3 className="text-2xl font-semibold text-gray-100">Software Engineer (Intern)</h3>
                   <p className="text-blue-300 text-lg font-medium">Easy Truck IN</p>
                 </div>
                 <span className="text-gray-300 md:text-right font-medium">February 2025 – August 2025</span>
@@ -165,11 +290,23 @@ export default function Home() {
                 </li>
               </ul>
             </div>
+              </div>
+            </div>
 
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-slate-800/80 rounded-2xl p-10 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex gap-8">
+                {/* Badge Section */}
+                <div className="flex-shrink-0 flex justify-center items-start pt-2">
+                  <ClientOnly>
+                    <Lanyard size="large" position={[0, 0, 20]} />
+                  </ClientOnly>
+                </div>
+                
+                {/* Content Section */}
+                <div className="flex-1">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h3 className="text-2xl font-serif font-semibold text-gray-100">AI Engineer (Intern)</h3>
+                      <h3 className="text-2xl font-semibold text-gray-100">AI Engineer (Intern)</h3>
                   <p className="text-blue-300 text-lg font-medium">Morocco Customs Administration</p>
                   <p className="text-gray-300">Rabat, Morocco</p>
                 </div>
@@ -186,11 +323,23 @@ export default function Home() {
                 </li>
               </ul>
             </div>
+              </div>
+            </div>
 
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="bg-slate-800/80 rounded-2xl p-10 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex gap-8">
+                {/* Badge Section */}
+                <div className="flex-shrink-0 flex justify-center items-start pt-2">
+                  <ClientOnly>
+                    <Lanyard size="large" position={[0, 0, 20]} />
+                  </ClientOnly>
+                </div>
+                
+                {/* Content Section */}
+                <div className="flex-1">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                  <h3 className="text-2xl font-serif font-semibold text-gray-100">Full-Stack Developer (Intern)</h3>
+                      <h3 className="text-2xl font-semibold text-gray-100">Full-Stack Developer (Intern)</h3>
                   <p className="text-blue-300 text-lg font-medium">Morocco Trade and Development Services</p>
                   <p className="text-gray-300">Rabat, Morocco</p>
                 </div>
@@ -206,6 +355,8 @@ export default function Home() {
                   <span>Built responsive interface with 100% mobile compatibility, delivered 2 weeks ahead of schedule</span>
                 </li>
               </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -218,69 +369,79 @@ export default function Home() {
             Key Projects
           </h2>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-3">MovieRec - AI Cinema Recommendation</h3>
-              <p className="text-blue-300 mb-4 font-medium">Film Discovery Platform for Cinema Enthusiasts</p>
-              <p className="text-gray-300 mb-6 font-medium">March 2025 – Present</p>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Personalized recommendation platform serving 200+ users with highly acclaimed user experience</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Developed with React Native, TMDB API and collaborative filtering algorithms</span>
-                </li>
-              </ul>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            {/* Left Side - Content and Button */}
+            <div className="space-y-8">
+              <div className="space-y-6">
+                <h3 className="text-2xl font-serif font-semibold text-gray-100">
+                  Showcasing Innovation & Technical Excellence
+                </h3>
+                <p className="text-gray-200 text-lg leading-relaxed">
+                  From AI-powered applications to full-stack solutions, each project demonstrates my passion for creating impactful technology solutions. Explore my work and see how I tackle complex challenges with modern development approaches.
+                </p>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
+                    <span className="text-blue-400 text-xl">🚀</span>
+                    <span className="text-gray-200 font-medium">AI & Machine Learning Solutions</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
+                    <span className="text-blue-400 text-xl">💻</span>
+                    <span className="text-gray-200 font-medium">Full-Stack Development</span>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
+                    <span className="text-blue-400 text-xl">🔧</span>
+                    <span className="text-gray-200 font-medium">Modern Tech Stack</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* View All Projects Button */}
+              <Link 
+                href="/projects"
+                className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-blue-500/30"
+              >
+                <span>View All Projects</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </Link>
             </div>
 
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-3">DiaBot - AI Health Assistant</h3>
-              <p className="text-blue-300 mb-4 font-medium">Intelligent Health Monitoring Application</p>
-              <p className="text-gray-300 mb-6 font-medium">October 2024 – January 2025</p>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Personalized health assistant serving 100+ users with 85% retention rate</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>RAG architecture using Google Gemini and ChromaDB on GCP infrastructure</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-3">AthleteIQ+ - Sports Performance</h3>
-              <p className="text-blue-300 mb-4 font-medium">Training Management Solution</p>
-              <p className="text-gray-300 mb-6 font-medium">October 2024 – January 2025</p>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Performance analysis platform for 1,000+ athletes, increasing training efficiency by 45%</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Spring Boot microservices architecture with Kafka messaging and Next.js interface</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-              <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-3">AI Product Demand Forecasting</h3>
-              <p className="text-blue-300 mb-4 font-medium">ML Prediction System</p>
-              <p className="text-gray-300 mb-6 font-medium">May 2024</p>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Demand forecasting model for local market analysis with 87% accuracy</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>End-to-end pipeline using Python, Pandas, NumPy and Scikit-learn</span>
-                </li>
-              </ul>
+            {/* Right Side - CardSwap */}
+            <div className="relative h-[600px]">
+              <ClientOnly>
+                <CardSwap
+                  cardDistance={60}
+                  verticalDistance={70}
+                  delay={5000}
+                  pauseOnHover={true}
+                  onCardClick={(idx: number) => {
+                    console.log(`Card ${idx} clicked`);
+                  }}
+                >
+                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
+                    <div className="text-center">
+                      <h4 className="text-xl font-semibold text-gray-100 mb-2">MovieRec</h4>
+                      <p className="text-blue-300 text-sm mb-3">AI Cinema Recommendation</p>
+                      <p className="text-gray-300 text-xs">React Native • TMDB API • AI</p>
+                    </div>
+                  </Card>
+                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
+                    <div className="text-center">
+                      <h4 className="text-xl font-semibold text-gray-100 mb-2">DiaBot</h4>
+                      <p className="text-blue-300 text-sm mb-3">AI Health Assistant</p>
+                      <p className="text-gray-300 text-xs">Python • Gemini • ChromaDB</p>
+                    </div>
+                  </Card>
+                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
+                    <div className="text-center">
+                      <h4 className="text-xl font-semibold text-gray-100 mb-2">AthleteIQ+</h4>
+                      <p className="text-blue-300 text-sm mb-3">Sports Performance</p>
+                      <p className="text-gray-300 text-xs">Spring Boot • Kafka • Next.js</p>
+                    </div>
+                  </Card>
+                </CardSwap>
+              </ClientOnly>
             </div>
           </div>
         </div>
@@ -372,15 +533,182 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-6 bg-slate-800/20">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-serif font-bold text-center mb-16 text-blue-400">
+            Get In Touch
+          </h2>
+          
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Contact Form */}
+            <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg">
+              <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-6">Send Me a Message</h3>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="firstName" className="block text-gray-200 font-medium mb-2">First Name</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-700/60 border border-blue-600/30 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                      placeholder="Your first name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-gray-200 font-medium mb-2">Last Name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-slate-700/60 border border-blue-600/30 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                      placeholder="Your last name"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="email" className="block text-gray-200 font-medium mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-700/60 border border-blue-600/30 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    placeholder="your.email@example.com"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="subject" className="block text-gray-200 font-medium mb-2">Subject</label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-700/60 border border-blue-600/30 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    placeholder="What's this about?"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label htmlFor="message" className="block text-gray-200 font-medium mb-2">Message</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 bg-slate-700/60 border border-blue-600/30 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
+                    placeholder="Tell me about your project, opportunity, or just say hello!"
+                    required
+                  ></textarea>
+                </div>
+                
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? "Sending..." : "Send Message"}
+                </button>
+                {submitStatus === "success" && (
+                  <p className="text-green-400 text-center mt-4">{statusMessage}</p>
+                )}
+                {submitStatus === "error" && (
+                  <p className="text-red-400 text-center mt-4">{statusMessage}</p>
+                )}
+              </form>
+            </div>
+
+            {/* Contact Information */}
+            <div className="space-y-8">
+              <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg">
+                                  <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-6">Let&apos;s Connect</h3>
+                                  <p className="text-gray-200 text-lg leading-relaxed mb-8">
+                    I&apos;m always interested in hearing about new opportunities, exciting projects, or just connecting with fellow developers and tech enthusiasts. Feel free to reach out!
+                  </p>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                    <FaEnvelope className="text-blue-400 text-xl" />
+                    <div>
+                      <p className="text-gray-200 font-medium">Email</p>
+                      <p className="text-blue-300">anas2002saadi@gmail.com</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                    <FaPhone className="text-blue-400 text-xl" />
+                    <div>
+                      <p className="text-gray-200 font-medium">Phone</p>
+                      <p className="text-blue-300">+212-678851747</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-4 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                    <FaMapMarkerAlt className="text-blue-400 text-xl" />
+                    <div>
+                      <p className="text-gray-200 font-medium">Location</p>
+                      <p className="text-blue-300">Rabat, Morocco</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-slate-800/80 rounded-2xl p-8 border border-blue-600/30 shadow-lg">
+                <h3 className="text-2xl font-serif font-semibold text-gray-100 mb-6">Professional Profiles</h3>
+                <div className="space-y-4">
+                  <a 
+                    href="https://www.linkedin.com/in/anas-saadi-25008120a/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-4 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30 hover:bg-blue-900/30 transition-all duration-300 group"
+                  >
+                    <FaLinkedin className="text-blue-400 text-xl group-hover:scale-110 transition-transform duration-300" />
+                    <div>
+                      <p className="text-gray-200 font-medium">LinkedIn</p>
+                      <p className="text-blue-300">Connect professionally</p>
+                    </div>
+                  </a>
+                  
+                  <a 
+                    href="https://github.com/anasaadi02"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-4 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30 hover:bg-blue-900/30 transition-all duration-300 group"
+                  >
+                    <FaGithub className="text-blue-400 text-xl group-hover:scale-110 transition-transform duration-300" />
+                    <div>
+                      <p className="text-gray-200 font-medium">GitHub</p>
+                      <p className="text-blue-300">View my projects</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-12 px-6 bg-blue-900/20 border-t border-blue-600/30">
         <div className="max-w-6xl mx-auto text-center">
           <p className="text-gray-300 mb-4 font-medium">
             © 2025 Anas Saadi. All rights reserved.
           </p>
-          <p className="text-gray-400 text-sm">
-            Built with Next.js, Tailwind CSS, and ❤️
-          </p>
+
         </div>
       </footer>
     </div>
