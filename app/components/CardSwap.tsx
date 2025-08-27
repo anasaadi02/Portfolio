@@ -9,6 +9,7 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import gsap from "gsap";
 
@@ -34,13 +35,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       {...rest}
-      className={`absolute top-1/2 left-1/2 rounded-xl border border-white bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
+      className={`absolute top-1/2 left-1/2 rounded-xl border border-gray-600 bg-white [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] shadow-lg ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
     />
   )
 );
 Card.displayName = "Card";
 
-type CardRef = RefObject<HTMLDivElement>;
+type CardRef = RefObject<HTMLDivElement | null>;
 interface Slot {
   x: number;
   y: number;
@@ -55,8 +56,8 @@ const makeSlot = (
   total: number
 ): Slot => ({
   x: i * distX,
-  y: -i * distY,
-  z: -i * distX * 1.5,
+  y: -i * distY * 0.6, // Keep negative for stacking, but reduce for bottom lean
+  z: -i * distX * 1.2,
   zIndex: total - i,
 });
 
@@ -85,6 +86,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
   easing = "elastic",
   children,
 }) => {
+  // Add mounted state to prevent hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+  
   const config =
     easing === "elastic"
       ? {
@@ -108,9 +112,11 @@ const CardSwap: React.FC<CardSwapProps> = ({
     () => Children.toArray(children) as ReactElement<CardProps>[],
     [children]
   );
+  
+  // Create refs only after mounting to prevent hydration issues
   const refs = useMemo<CardRef[]>(
-    () => childArr.map(() => React.createRef<HTMLDivElement>()),
-    [childArr.length]
+    () => isMounted ? childArr.map(() => React.createRef<HTMLDivElement>()) : [],
+    [childArr.length, isMounted]
   );
 
   const order = useRef<number[]>(
@@ -121,7 +127,15 @@ const CardSwap: React.FC<CardSwapProps> = ({
   const intervalRef = useRef<number>();
   const container = useRef<HTMLDivElement>(null);
 
+  // Set mounted state after component mounts
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Only run effects after mounting to prevent hydration issues
+    if (!isMounted || refs.length === 0) return;
+
     const total = refs.length;
     refs.forEach((r, i) =>
       placeNow(
@@ -222,7 +236,27 @@ const CardSwap: React.FC<CardSwapProps> = ({
       clearInterval(intervalRef.current);
       clearTimeout(timer);
     };
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, isMounted, refs.length]);
+
+  // Don't render children until mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <div
+        ref={container}
+        className="absolute bottom-0 left-0 transform translate-x-[15%] translate-y-[10%] origin-bottom-left perspective-[900px] overflow-visible max-[768px]:translate-x-[20%] max-[768px]:translate-y-[15%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[20%] max-[480px]:scale-[0.55]"
+        style={{ width, height }}
+      >
+        {/* Render placeholder content during SSR */}
+        {childArr.map((child, i) => (
+          <div
+            key={i}
+            className="absolute top-1/2 left-1/2 rounded-xl border border-white bg-black opacity-50"
+            style={{ width, height }}
+          />
+        ))}
+      </div>
+    );
+  }
 
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)
@@ -241,7 +275,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   return (
     <div
       ref={container}
-      className="absolute bottom-0 right-0 transform translate-x-[5%] translate-y-[20%] origin-bottom-right perspective-[900px] overflow-visible max-[768px]:translate-x-[25%] max-[768px]:translate-y-[25%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[25%] max-[480px]:scale-[0.55]"
+      className="absolute bottom-0 left-0 transform translate-x-[15%] translate-y-[10%] origin-bottom-left perspective-[900px] overflow-visible max-[768px]:translate-x-[20%] max-[768px]:translate-y-[15%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[20%] max-[480px]:scale-[0.55]"
       style={{ width, height }}
     >
       {rendered}

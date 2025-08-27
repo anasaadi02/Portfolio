@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useCallback, useMemo, useState } from "react";
 import "./ProfileCard.css";
 
 interface ProfileCardProps {
@@ -76,11 +76,19 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   showUserInfo = true,
   onContactClick,
 }) => {
+  // Add mounted state to prevent hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+  
   const wrapRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Set mounted state after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const animationHandlers = useMemo(() => {
-    if (!enableTilt) return null;
+    if (!enableTilt || !isMounted) return null;
 
     let rafId: number | null = null;
 
@@ -155,7 +163,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
         }
       },
     };
-  }, [enableTilt]);
+  }, [enableTilt, isMounted]);
 
   const handlePointerMove = useCallback(
     (event: PointerEvent) => {
@@ -227,7 +235,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   );
 
   useEffect(() => {
-    if (!enableTilt || !animationHandlers) return;
+    if (!enableTilt || !animationHandlers || !isMounted) return;
 
     const card = cardRef.current;
     const wrap = wrapRef.current;
@@ -288,6 +296,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
     handlePointerEnter,
     handlePointerLeave,
     handleDeviceOrientation,
+    isMounted,
   ]);
 
   const cardStyle = useMemo(
@@ -306,6 +315,71 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   const handleContactClick = useCallback(() => {
     onContactClick?.();
   }, [onContactClick]);
+
+  // Don't render interactive content until mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <div
+        className={`pc-card-wrapper ${className}`.trim()}
+        style={cardStyle}
+      >
+        <section className="pc-card">
+          <div className="pc-inside">
+            <div className="pc-shine" />
+            <div className="pc-glare" />
+            <div className="pc-content pc-avatar-content">
+              <img
+                className="avatar"
+                src={avatarUrl}
+                alt={`${name || "User"} avatar`}
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = "none";
+                }}
+              />
+              {showUserInfo && (
+                <div className="pc-user-info">
+                  <div className="pc-user-details">
+                    <div className="pc-mini-avatar">
+                      <img
+                        src={miniAvatarUrl || avatarUrl}
+                        alt={`${name || "User"} mini avatar`}
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.opacity = "0.5";
+                          target.src = avatarUrl;
+                        }}
+                      />
+                    </div>
+                    <div className="pc-user-text">
+                      <div className="pc-handle">@{handle}</div>
+                      <div className="pc-status">{status}</div>
+                    </div>
+                  </div>
+                  <button
+                    className="pc-contact-btn"
+                    type="button"
+                    aria-label={`Contact ${name || "user"}`}
+                    disabled
+                  >
+                    {contactText}
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="pc-content">
+              <div className="pc-details">
+                <h3>{name}</h3>
+                <p>{title}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div

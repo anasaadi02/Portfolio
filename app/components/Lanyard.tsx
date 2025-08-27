@@ -6,7 +6,6 @@ import {
   useGLTF,
   useTexture,
   Environment,
-  Lightformer,
 } from "@react-three/drei";
 import {
   BallCollider,
@@ -32,6 +31,7 @@ interface LanyardProps {
   fov?: number;
   transparent?: boolean;
   size?: "small" | "medium" | "large";
+  model?: string;
 }
 
 export default function Lanyard({
@@ -40,18 +40,36 @@ export default function Lanyard({
   fov = 20,
   transparent = true,
   size = "large",
+  model = cardGLB,
 }: LanyardProps) {
+  // Add mounted state to prevent hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+  
   const sizeClasses = {
-    small: "w-40 h-40",
-    medium: "w-48 h-48", 
-    large: "w-56 h-56"
+    small: "w-44 h-44",
+    medium: "w-52 h-52", 
+    large: "w-64 h-64"
   };
 
   const scale = {
-    small: 0.7,
-    medium: 0.9,
-    large: 1.2
+    small: 0.8,
+    medium: 1.0,
+    large: 1.4
   };
+
+  // Set mounted state after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Don't render Canvas until mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <div className={`relative z-0 ${sizeClasses[size]} flex justify-center items-center transform scale-100 origin-center`}>
+        <div className="w-full h-full bg-slate-800/20 rounded-lg border border-blue-600/30 animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className={`relative z-0 ${sizeClasses[size]} flex justify-center items-center transform scale-100 origin-center`}>
@@ -62,40 +80,12 @@ export default function Lanyard({
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
         }
       >
-        <ambientLight intensity={Math.PI} />
+        <ambientLight intensity={0.3} />
+        <directionalLight position={[5, 5, 5]} intensity={0.2} castShadow />
         <Physics gravity={gravity} timeStep={1 / 60}>
-          <Band scale={scale[size]} />
+          <Band scale={scale[size]} model={model} />
         </Physics>
-        <Environment blur={0.75}>
-          <Lightformer
-            intensity={2}
-            color="white"
-            position={[0, -1, 5]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[-1, -1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 0.1, 1]}
-          />
-          <Lightformer
-            intensity={3}
-            color="white"
-            position={[1, 1, 1]}
-            rotation={[0, 0, Math.PI / 3]}
-            scale={[100, 10, 1]}
-          />
-          <Lightformer
-            intensity={10}
-            color="white"
-            position={[-10, 0, 14]}
-            rotation={[0, Math.PI / 2, Math.PI / 3]}
-            scale={[100, 10, 1]}
-          />
-        </Environment>
+        <Environment preset="apartment" />
       </Canvas>
     </div>
   );
@@ -105,9 +95,10 @@ interface BandProps {
   maxSpeed?: number;
   minSpeed?: number;
   scale?: number;
+  model: string;
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, scale = 1 }: BandProps) {
+function Band({ maxSpeed = 50, minSpeed = 0, scale = 1, model }: BandProps) {
   // Using "any" for refs since the exact types depend on Rapier's internals
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
@@ -129,7 +120,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1 }: BandProps) {
     linearDamping: 4,
   };
 
-  const { nodes, materials } = useGLTF(cardGLB) as any;
+  const { nodes, materials } = useGLTF(model) as any;
   const texture = useTexture(lanyard);
   const [curve] = useState(
     () =>
@@ -149,14 +140,17 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1 }: BandProps) {
 
   useEffect(() => {
     setIsMounted(true);
-    setIsSmall(window.innerWidth < 1024);
-    
-    const handleResize = (): void => {
+    // Only access window after mounting to prevent hydration issues
+    if (typeof window !== 'undefined') {
       setIsSmall(window.innerWidth < 1024);
-    };
+      
+      const handleResize = (): void => {
+        setIsSmall(window.innerWidth < 1024);
+      };
 
-    window.addEventListener("resize", handleResize);
-    return (): void => window.removeEventListener("resize", handleResize);
+      window.addEventListener("resize", handleResize);
+      return (): void => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
@@ -285,18 +279,21 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1 }: BandProps) {
               <meshPhysicalMaterial
                 map={materials.base.map}
                 map-anisotropy={16}
-                clearcoat={1}
-                clearcoatRoughness={0.15}
+                clearcoat={0}
                 roughness={0.9}
-                metalness={0.8}
+                metalness={0.1}
               />
             </mesh>
             <mesh
               geometry={nodes.clip.geometry}
               material={materials.metal}
-              material-roughness={0.3}
+              material-roughness={0.8}
             />
-            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
+            <mesh 
+              geometry={nodes.clamp.geometry} 
+              material={materials.metal}
+              material-roughness={0.8}
+            />
           </group>
         </RigidBody>
       </group>

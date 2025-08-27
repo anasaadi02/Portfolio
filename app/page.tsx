@@ -142,8 +142,7 @@ export default function Home() {
                      <div className="mb-12">
              {/* Advanced Profile Card */}
              <div className="flex justify-center">
-                               <ClientOnly>
-                                 <ProfileCard
+                               <ProfileCard
                   name="Anas Saadi"
                   title="Junior Software Engineer - ENSIAS Alumni"
                   handle="anasaadi02"
@@ -158,9 +157,8 @@ export default function Home() {
                     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 />
-                               </ClientOnly>
+                               </div>
              </div>
-           </div>
           
                      {/* Contact Info */}
            <div id="about" className="flex flex-wrap justify-center gap-8 mb-12">
@@ -266,7 +264,7 @@ export default function Home() {
                 {/* Badge Section */}
                 <div className="flex-shrink-0 flex justify-center items-start pt-2">
                   <ClientOnly>
-                    <Lanyard size="large" position={[0, 0, 20]} />
+                    <Lanyard size="large" position={[0, 0, 20]} model="/easytruck.glb" />
                   </ClientOnly>
                 </div>
                 
@@ -298,7 +296,7 @@ export default function Home() {
                 {/* Badge Section */}
                 <div className="flex-shrink-0 flex justify-center items-start pt-2">
                   <ClientOnly>
-                    <Lanyard size="large" position={[0, 0, 20]} />
+                    <Lanyard size="large" position={[0, 0, 20]} model="/douane.glb" />
                   </ClientOnly>
                 </div>
                 
@@ -328,10 +326,10 @@ export default function Home() {
 
             <div className="bg-slate-800/80 rounded-2xl p-10 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
               <div className="flex gap-8">
-                {/* Badge Section */}
+                                {/* Badge Section */}
                 <div className="flex-shrink-0 flex justify-center items-start pt-2">
                   <ClientOnly>
-                    <Lanyard size="large" position={[0, 0, 20]} />
+                    <Lanyard size="large" position={[0, 0, 20]} model="/MTDS.glb" />
                   </ClientOnly>
                 </div>
                 
@@ -355,7 +353,7 @@ export default function Home() {
                   <span>Built responsive interface with 100% mobile compatibility, delivered 2 weeks ahead of schedule</span>
                 </li>
               </ul>
-                </div>
+            </div>
               </div>
             </div>
           </div>
@@ -369,79 +367,141 @@ export default function Home() {
             Key Projects
           </h2>
           
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            {/* Left Side - Content and Button */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h3 className="text-2xl font-serif font-semibold text-gray-100">
-                  Showcasing Innovation & Technical Excellence
-                </h3>
-                <p className="text-gray-200 text-lg leading-relaxed">
-                  From AI-powered applications to full-stack solutions, each project demonstrates my passion for creating impactful technology solutions. Explore my work and see how I tackle complex challenges with modern development approaches.
-                </p>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
-                    <span className="text-blue-400 text-xl">🚀</span>
-                    <span className="text-gray-200 font-medium">AI & Machine Learning Solutions</span>
+          {/* Window-like Container */}
+          <div className="relative bg-slate-800/80 rounded-2xl border border-blue-600/30 shadow-2xl overflow-hidden">
+            {/* Window Frame */}
+            <div className="bg-slate-700/90 px-6 py-4 border-b border-blue-600/30">
+              <div className="flex items-center space-x-3">
+                <div className="flex space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
+                <span className="text-gray-300 text-sm font-medium ml-4">Projects Portfolio</span>
+              </div>
+            </div>
+            
+            {/* Window Content */}
+            <div className="p-8">
+              <div className="grid lg:grid-cols-2 gap-12 items-start">
+                {/* Left Side - Content and Button */}
+                <div className="space-y-8">
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-serif font-semibold text-gray-100">
+                      Showcasing Innovation & Technical Excellence
+                    </h3>
+                    <p className="text-gray-200 text-lg leading-relaxed">
+                      From AI-powered applications to full-stack solutions, each project demonstrates my passion for creating impactful technology solutions. Explore my work and see how I tackle complex challenges with modern development approaches.
+                    </p>
+                    <div className="space-y-4">
+                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                        <span className="text-blue-400 text-xl">🚀</span>
+                        <span className="text-gray-200 font-medium">AI & Machine Learning Solutions</span>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                        <span className="text-blue-400 text-xl">💻</span>
+                        <span className="text-gray-200 font-medium">Full-Stack Development</span>
+                      </div>
+                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
+                        <span className="text-blue-400 text-xl">🔧</span>
+                        <span className="text-gray-200 font-medium">Modern Tech Stack</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
-                    <span className="text-blue-400 text-xl">💻</span>
-                    <span className="text-gray-200 font-medium">Full-Stack Development</span>
-                  </div>
-                  <div className="flex items-center space-x-3 p-4 bg-slate-800/60 rounded-lg border border-blue-600/30">
-                    <span className="text-blue-400 text-xl">🔧</span>
-                    <span className="text-gray-200 font-medium">Modern Tech Stack</span>
-                  </div>
+                  
+                  {/* View All Projects Button */}
+                  <Link 
+                    href="/projects"
+                    className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-blue-500/30"
+                  >
+                    <span>View All Projects</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </Link>
+                </div>
+                
+                {/* Right Side - CardSwap positioned like a window */}
+                <div className="relative h-[500px] bg-gradient-to-br from-slate-900/50 to-blue-900/20 rounded-xl border border-blue-600/30 overflow-hidden">
+                  <ClientOnly>
+                    <CardSwap
+                      cardDistance={50}
+                      verticalDistance={60}
+                      delay={3000}
+                      pauseOnHover={true}
+                      onCardClick={(idx: number) => {
+                        console.log(`Card ${idx} clicked`);
+                      }}
+                    >
+                      <Card className="overflow-hidden">
+                        {/* Browser Header */}
+                        <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center space-x-2">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="ml-3 flex-1 bg-white border border-gray-300 rounded-md px-3 py-1">
+                            <span className="text-xs text-gray-600">CineRec.app</span>
+                          </div>
+                        </div>
+                        {/* Website Screenshot */}
+                        <div className="bg-white flex-1">
+                          <img 
+                            src="/cinescreen.png" 
+                            alt="CineRec App Screenshot"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </Card>
+                      <Card className="overflow-hidden">
+                        {/* Browser Header */}
+                        <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center space-x-2">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="ml-3 flex-1 bg-white border border-gray-300 rounded-md px-3 py-1">
+                            <span className="text-xs text-gray-600">diabot.health</span>
+                          </div>
+                          <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                        </div>
+                        {/* Page Content */}
+                        <div className="p-4 bg-white">
+                          <div className="text-center">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-2">DiaBot</h4>
+                            <p className="text-blue-600 text-sm mb-2">AI Health Assistant</p>
+                            <p className="text-gray-500 text-xs">Python • Gemini • ChromaDB</p>
+                          </div>
+                        </div>
+                      </Card>
+                      <Card className="overflow-hidden">
+                        {/* Browser Header */}
+                        <div className="bg-gray-100 border-b border-gray-300 px-4 py-2 flex items-center space-x-2">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="ml-3 flex-1 bg-white border border-gray-300 rounded-md px-3 py-1">
+                            <span className="text-xs text-gray-600">athleteiq.plus</span>
+                          </div>
+                          <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                        </div>
+                        {/* Page Content */}
+                        <div className="p-4 bg-white">
+                          <div className="text-center">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-2">AthleteIQ+</h4>
+                            <p className="text-blue-600 text-sm mb-2">Sports Performance</p>
+                            <p className="text-gray-500 text-xs">Spring Boot • Kafka • Next.js</p>
+                          </div>
+                        </div>
+                      </Card>
+                    </CardSwap>
+                  </ClientOnly>
                 </div>
               </div>
-              
-              {/* View All Projects Button */}
-              <Link 
-                href="/projects"
-                className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border border-blue-500/30"
-              >
-                <span>View All Projects</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </Link>
-            </div>
-
-            {/* Right Side - CardSwap */}
-            <div className="relative h-[600px]">
-              <ClientOnly>
-                <CardSwap
-                  cardDistance={60}
-                  verticalDistance={70}
-                  delay={5000}
-                  pauseOnHover={true}
-                  onCardClick={(idx: number) => {
-                    console.log(`Card ${idx} clicked`);
-                  }}
-                >
-                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
-                    <div className="text-center">
-                      <h4 className="text-xl font-semibold text-gray-100 mb-2">MovieRec</h4>
-                      <p className="text-blue-300 text-sm mb-3">AI Cinema Recommendation</p>
-                      <p className="text-gray-300 text-xs">React Native • TMDB API • AI</p>
-                    </div>
-                  </Card>
-                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
-                    <div className="text-center">
-                      <h4 className="text-xl font-semibold text-gray-100 mb-2">DiaBot</h4>
-                      <p className="text-blue-300 text-sm mb-3">AI Health Assistant</p>
-                      <p className="text-gray-300 text-xs">Python • Gemini • ChromaDB</p>
-                    </div>
-                  </Card>
-                  <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border-blue-500/50">
-                    <div className="text-center">
-                      <h4 className="text-xl font-semibold text-gray-100 mb-2">AthleteIQ+</h4>
-                      <p className="text-blue-300 text-sm mb-3">Sports Performance</p>
-                      <p className="text-gray-300 text-xs">Spring Boot • Kafka • Next.js</p>
-                    </div>
-                  </Card>
-                </CardSwap>
-              </ClientOnly>
             </div>
           </div>
         </div>
