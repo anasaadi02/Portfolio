@@ -393,20 +393,7 @@ export default function Home() {
                     <p className="text-gray-200 text-lg leading-relaxed">
                       From AI-powered applications to full-stack solutions, each project demonstrates my passion for creating impactful technology solutions. Explore my work and see how I tackle complex challenges with modern development approaches.
                     </p>
-                    <div className="space-y-4">
-                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
-                        <span className="text-blue-400 text-xl">🚀</span>
-                        <span className="text-gray-200 font-medium">AI & Machine Learning Solutions</span>
-                      </div>
-                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
-                        <span className="text-blue-400 text-xl">💻</span>
-                        <span className="text-gray-200 font-medium">Full-Stack Development</span>
-                      </div>
-                      <div className="flex items-center space-x-3 p-4 bg-slate-700/60 rounded-lg border border-blue-600/30">
-                        <span className="text-blue-400 text-xl">🔧</span>
-                        <span className="text-gray-200 font-medium">Modern Tech Stack</span>
-                      </div>
-                    </div>
+
                   </div>
                   
                   {/* View All Projects Button */}
