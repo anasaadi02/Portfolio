@@ -17,6 +17,7 @@ interface ProfileCardProps {
   miniAvatarUrl?: string;
   name?: string;
   title?: string;
+
   handle?: string;
   status?: string;
   contactText?: string;
@@ -70,6 +71,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   miniAvatarUrl,
   name = "Anas Saadi",
   title = "Software Engineer & AI Enthusiast",
+
   handle = "anasaadi02",
   status = "Available for opportunities",
   contactText = "Contact Me",

@@ -46,15 +46,15 @@ export default function Lanyard({
   const [isMounted, setIsMounted] = useState(false);
   
   const sizeClasses = {
-    small: "w-44 h-44",
-    medium: "w-52 h-52", 
-    large: "w-64 h-64"
+    small: "w-48 h-48",
+    medium: "w-56 h-56", 
+    large: "w-72 h-72"
   };
 
   const scale = {
-    small: 0.8,
-    medium: 1.0,
-    large: 1.4
+    small: 0.9,
+    medium: 1.1,
+    large: 1.6
   };
 
   // Set mounted state after component mounts
@@ -216,14 +216,14 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1, model }: BandProps) {
 
   return (
     <>
-      <group position={[0, 4 * scale, 0]} scale={scale}>
+      <group position={[0, 2.9 * scale, 0]} scale={scale}>
         <RigidBody
           ref={fixed}
           {...segmentProps}
           type={"fixed" as RigidBodyProps["type"]}
         />
         <RigidBody
-          position={[0.5, 0, 0]}
+          position={[0.8, 0, 0]}
           ref={j1}
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
@@ -231,7 +231,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1, model }: BandProps) {
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[1, 0, 0]}
+          position={[1.6, 0, 0]}
           ref={j2}
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
@@ -239,7 +239,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1, model }: BandProps) {
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[1.5, 0, 0]}
+          position={[2.4, 0, 0]}
           ref={j3}
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
@@ -247,7 +247,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, scale = 1, model }: BandProps) {
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[2, 0, 0]}
+          position={[2.8, 0, 0]}
           ref={card}
           {...segmentProps}
           type={

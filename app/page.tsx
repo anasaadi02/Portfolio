@@ -7,6 +7,7 @@ import { FaGithub, FaLinkedin, FaEnvelope, FaPhone, FaMapMarkerAlt, FaRocket, Fa
 import ProfileCard from "./components/ProfileCard";
 import Lanyard from "./components/Lanyard";
 import CardSwap, { Card } from "./components/CardSwap";
+import RotatingText from "./components/RotatingText";
 
 // Client-side only wrapper to prevent hydration issues
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -153,7 +154,7 @@ export default function Home() {
                   enableTilt={true}
                   enableMobileTilt={false}
                   onContactClick={() => {
-                    // Scroll to contact section or open contact modal
+                    // Scroll to contact modal
                     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 />
@@ -204,6 +205,36 @@ export default function Home() {
           <h2 className="text-4xl font-serif font-bold text-center mb-16 text-blue-400">
             About Me
           </h2>
+          
+          {/* Dynamic Title */}
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-serif font-semibold text-gray-200 mb-4 flex items-center justify-center gap-2">
+              <span>I&apos;m </span>
+              <span id="article-text" className="text-blue-400 font-bold">a</span>
+              <div className="inline-block align-baseline" style={{ transform: 'translateY(12px)' }}>
+                <RotatingText
+                  texts={["Software", "Full-Stack", "AI"]}
+                  mainClassName="text-blue-400 font-bold inline-block align-baseline"
+                  staggerFrom="first"
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: "-120%", opacity: 0 }}
+                  staggerDuration={0.05}
+                  transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                  rotationInterval={2500}
+                  auto={true}
+                  loop={true}
+                  onNext={(index) => {
+                    const articleSpan = document.getElementById('article-text');
+                    if (articleSpan) {
+                      articleSpan.textContent = index === 2 ? 'an' : 'a';
+                    }
+                  }}
+                />
+              </div>
+              <span>Engineer</span>
+            </h3>
+          </div>
           
           <div className="grid md:grid-cols-2 gap-16 items-start">
             <div>
