@@ -270,23 +270,57 @@ export default function Home() {
                 
                 {/* Content Section */}
                 <div className="flex-1">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <div>
-                      <h3 className="text-2xl font-semibold text-gray-100">Software Engineer (Intern)</h3>
-                  <p className="text-blue-300 text-lg font-medium">Easy Truck IN</p>
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <div>
+                      <h3 className="text-2xl font-semibold text-gray-100">Junior AI Engineer</h3>
+                      <p className="text-blue-300 text-lg font-medium">Easy Truck IN</p>
+                      <p className="text-gray-300">Tangier, Morocco</p>
+                    </div>
+                    <span className="text-gray-300 md:text-right font-medium">September 2025 – Present</span>
+                  </div>
+                  <ul className="text-gray-200 space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Promoted from internship to full-time AI engineering role, continuing development of intelligent systems</span>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Expanding AI capabilities and leading new machine learning initiatives for the company</span>
+                    </li>
+                  </ul>
                 </div>
-                <span className="text-gray-300 md:text-right font-medium">February 2025 – August 2025</span>
               </div>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Developed an intelligent driver management system with AI functionalities for 500+ users, reducing support requests by 35%</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Built using LangChain/HuggingFace, React and Node.JS</span>
-                </li>
-              </ul>
+            </div>
+
+            <div className="bg-slate-800/80 rounded-2xl p-10 border border-blue-600/30 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="flex gap-8">
+                {/* Badge Section */}
+                <div className="flex-shrink-0 flex justify-center items-start pt-2">
+                  <ClientOnly>
+                    <Lanyard size="large" position={[0, 0, 20]} model="/easytruck.glb" />
+                  </ClientOnly>
+                </div>
+                
+                {/* Content Section */}
+                <div className="flex-1">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                    <div>
+                      <h3 className="text-2xl font-semibold text-gray-100">Software Engineer (Intern)</h3>
+                      <p className="text-blue-300 text-lg font-medium">Easy Truck IN</p>
+                      <p className="text-gray-300">Remote Work</p>
+                    </div>
+                    <span className="text-gray-300 md:text-right font-medium">February 2025 – August 2025</span>
+                  </div>
+                                    <ul className="text-gray-200 space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Developed an intelligent driver management system with AI functionalities for fleet management and driver support</span>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Built using LangChain/HuggingFace, React and Node.JS</span>
+                    </li>
+                  </ul>
             </div>
               </div>
             </div>
@@ -310,16 +344,16 @@ export default function Home() {
                 </div>
                 <span className="text-gray-300 md:text-right font-medium">July – August 2024</span>
               </div>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Developed intelligent chatbot for 1,000+ PDF documents, improving operational efficiency by 60%</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Implemented RAG solution with ChromaDB and Streamlit interface, reducing search time to 30 seconds</span>
-                </li>
-              </ul>
+                                <ul className="text-gray-200 space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Developed intelligent chatbot for processing and querying large volumes of PDF documents</span>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Implemented RAG solution with ChromaDB and Streamlit interface for efficient document search</span>
+                    </li>
+                  </ul>
             </div>
               </div>
             </div>
@@ -343,16 +377,16 @@ export default function Home() {
                 </div>
                 <span className="text-gray-300 md:text-right font-medium">July – August 2023</span>
               </div>
-              <ul className="text-gray-200 space-y-3">
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Developed subscription management application handling 200+ subscriptions with 25% increased engagement</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <span className="text-blue-400 mt-1">•</span>
-                  <span>Built responsive interface with 100% mobile compatibility, delivered 2 weeks ahead of schedule</span>
-                </li>
-              </ul>
+                                <ul className="text-gray-200 space-y-3">
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Developed subscription management application for handling multiple client subscriptions and user engagement</span>
+                    </li>
+                    <li className="flex items-start space-x-3">
+                      <span className="text-blue-400 mt-1">•</span>
+                      <span>Built responsive interface with full mobile compatibility and delivered project ahead of schedule</span>
+                    </li>
+                  </ul>
             </div>
               </div>
             </div>
